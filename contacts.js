@@ -1,25 +1,53 @@
 import fs from "fs/promises";
-    const contactsPath = "./db/contacts.json";
+import path from "path";
+import { nanoid } from "nanoid";
+  
+const contactsPath = path.resolve("db", "contacts.json");
+const updateContactsList = contacts => fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
 
 export async function listContacts () {
     const listContacts = await fs.readFile(contactsPath, "utf-8");
-    console.log(listContacts);
+  console.log(JSON.parse(listContacts))  
+  return JSON.parse(listContacts);
 }
 
 export async function getContactById(contactId) {
-    const listContacts = await fs.readFile(contactsPath, "utf-8");
+    const contacts = await listContacts();
     console.log(listContacts)
-    const data = JSON.parse(listContacts)
-       const contactById = data.find(contact => contact.id === contactId)
-    console.log(contactById);
-  // ...твій код. Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
+    const contact = contacts.find(contact => contact.id === contactId)
+    return contact || null;
 }
 
-export async function removeContact(contactId) {
-  // ...твій код. Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
+export async function removeContact(id) {
+  const contacts = await listContacts();
+  const index = contacts.findIndex(item => item.id === id);
+  if (index === -1) {
+    return null;
+  }
+    const [result] = contacts.splice(index, 1);
+    await updateContactsList(contacts);
+    return result;
 }
 
-export async function addContact(name, email, phone) {
-  // ...твій код. Повертає об'єкт доданого контакту. 
+export async function addContact({name, email, phone}) {
+  const contacts = await listContacts();
+
+  const newContact = {
+    id: nanoid(),
+    name,
+    email,
+    phone,
+  }
+  
+  contacts.push(newContact);
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return newContact;
+}
+
+export default {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
 }
