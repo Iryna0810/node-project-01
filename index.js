@@ -1,9 +1,5 @@
 import contactsServices from "./contacts.js";
-// const argv = require('yargs').argv;
-
-console.log("Welcome to Node, girl");
-contactsServices.listContacts();
-
+import yargs from "yargs";
 
 async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
@@ -13,7 +9,6 @@ async function invokeAction({ action, id, name, email, phone }) {
       case 'get':
           const contact = await contactsServices.getContactById(id)
           return console.log(contact)
-      // ... id
       break;
 
       case 'add':
@@ -29,9 +24,7 @@ async function invokeAction({ action, id, name, email, phone }) {
   }
 }
 
-// invokeAction({ action: "get", id: "1DEXoP8AuCGYc1YgoQ6hw" });
-// invokeAction({ action: "add", name: "Adrii", email: "andrii@mail.com", phone: "09945646646" });
-invokeAction({ action: "remove", id: "FqBnIYzi4hWomYp2dyH33" });
-
+const { argv } = yargs(process.argv.slice(2));
+invokeAction(argv);
 
 

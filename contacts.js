@@ -7,14 +7,12 @@ const updateContactsList = contacts => fs.writeFile(contactsPath, JSON.stringify
 
 
 export async function listContacts () {
-    const listContacts = await fs.readFile(contactsPath, "utf-8");
-  console.log(JSON.parse(listContacts))  
+  const listContacts = await fs.readFile(contactsPath, "utf-8");
   return JSON.parse(listContacts);
 }
 
 export async function getContactById(contactId) {
     const contacts = await listContacts();
-    console.log(listContacts)
     const contact = contacts.find(contact => contact.id === contactId)
     return contact || null;
 }
